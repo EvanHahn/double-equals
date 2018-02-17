@@ -2,7 +2,10 @@ const doubleEquals = require('../double-equals')
 const assert = require('assert')
 const { inspect } = require('util')
 
-const NUMBERS = [
+const booleans = [true, false]
+const nulls = [null]
+const undefineds = [undefined]
+const numbers = [
   -0,
   +0,
   -1,
@@ -18,13 +21,54 @@ const NUMBERS = [
   -Infinity,
   NaN
 ]
+const strings = [
+  '',
+  'hi',
+  '5,6',
+  '😈',
+  '[object Object]',
+  '[object JSON]'
+]
+const symbols = [
+  Symbol(), // eslint-disable-line symbol-description
+  Symbol('what'),
+  Symbol.for('theheck')
+]
 
-const ALL_VALUES = NUMBERS
+const arrays = [
+  [],
+  ['hi'],
+  [1],
+  [5, 6]
+]
+
+const objects = [
+  {},
+  Object.create(null),
+  { hi: 5 },
+  JSON,
+  new Date(),
+  { [Symbol.toPrimitive]: () => ({ bad: true }) }
+]
+
+const objectWrappers = booleans.concat(numbers, strings).map(Object)
+
+const all = [].concat(
+  booleans,
+  nulls,
+  undefineds,
+  numbers,
+  strings,
+  symbols,
+  arrays,
+  objects,
+  objectWrappers
+)
 
 describe('doubleEquals', () => {
   it('always returns the same results as ==', () => {
-    ALL_VALUES.forEach((a) => {
-      ALL_VALUES.forEach((b) => {
+    all.forEach((a) => {
+      all.forEach((b) => {
         const expected = a == b // eslint-disable-line eqeqeq
         const actual = doubleEquals(a, b)
         assert.equal(actual, expected, `doubleEquals(${inspect(a)}, ${inspect(b)}) should be ${expected}`)
